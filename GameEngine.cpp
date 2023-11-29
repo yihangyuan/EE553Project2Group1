@@ -98,8 +98,137 @@ void GameEngine::initRabbits() {
 
 int GameEngine::remainingVeggies(){
 
+	int count = 0; 
+
+	for(int i = 0; i < height; i++){
+
+		for(int j = 0; j < width; j++){
+
+			Veggie * veggie = dynamic_cast<Veggie *>(array2D[i][j]);
+
+			if(veggie != nullptr){
+				count += 1;
+			}
+		}
+	}
+
+	return count;
 }
 
 void GameEngine::intro() {
 
+	cout << "Welcome to Captain Veggie!" << endl
+		 << "The rabbits have invaded your garden and you must harvest" << endl
+		 << "as many vegetables as possible before the rabbits eat them" << endl
+		 << "all! Each vegetable is worth a different number of points" << endl
+		 << "so go for the high score!" << endl
+		 << endl
+		 << "The vegetables are:" << endl;
+
+	for(int i = 0; i < veggies.size(); i ++){
+		
+		cout << veggies[i]->getSymbol() <<": "
+			 << veggies[i]->getName() << " "
+			 << veggies[i]->getPoints() << " points" 
+			 << endl;
+	}
+
+	cout << "Captain Veggie is V, and the rabbits are R's." << endl
+		 << endl
+		 << "Good luck!" << endl
+		 << endl;
+	
+
 }
+
+void GameEngine::printField(){
+
+	cout << string(width + 2, '#') << endl; // header
+	
+	for(int i = 0; i < height; i++){
+		
+		cout << '#';
+		
+		for(int j = 0; j< width; j++){
+
+			Veggie * veggie = dynamic_cast<Veggie *>(array2D[i][j]);
+			
+			if(veggie != nullptr){
+
+				cout << veggie->getSymbol();
+
+			}else{
+
+				Rabbit * rabbit = dynamic_cast<Rabbit *>(array2D[i][j]);
+				
+				if(rabbit != nullptr){
+					
+					cout << "R";
+					 
+				}else{
+
+					Captain * myCaptain = dynamic_cast <Captain *>(array2D[i][j]);
+
+					if(myCaptain != nullptr){
+
+						cout << "V";
+
+					}else{
+
+						cout << " ";
+					}
+				}
+				
+			}
+		}
+
+		cout << '#' << endl;
+
+	}
+
+	cout << string(width + 2, '#') << endl;
+
+}
+
+int GameEngine::getScore(){
+	return this->score;
+}
+
+void GameEngine::moveRabbits(){
+
+	srand(time(NULL));
+
+	int x, y, xdp, ydp;
+	bool illegal;
+	Rabbit * myRabbit;
+
+	for(int i = 0; i < rabbits.size(); i ++){
+
+		illegal = true; 
+		myRabbit = rabbits[i];
+		x = myRabbit->getX();
+		y = myRabbit->getY();
+		
+		do{
+
+			xdp = rand() % 3 - 1;
+			ydp = rand() % 3 - 1;
+
+			if(xdp == 0 && ydp ==0){
+				
+				illegal = false;
+
+			}else{
+
+				
+
+			}
+
+
+		}while(illegal);
+
+		
+		
+	}
+}
+
