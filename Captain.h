@@ -7,10 +7,14 @@ using namespace std;
 
 class Captain : public Creature {
   protected :
-    vector<Veggie*> veggies;
+    vector<Veggie*> collectedveggies;
   public:
-    Captain(int,int,string);
+    //Captain(int,int,string);
+    Captain(int x,int y);
     void addVeggie(Veggie*);
+
+    vector<Veggie*>& getCollectedVeggies();
+    void setCollectedVeggies(vector<Veggie*>&);
 };
 
 #endif
