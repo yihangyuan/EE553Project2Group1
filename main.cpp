@@ -1,7 +1,4 @@
-
-
 #include "GameEngine.h"
-
 using namespace std;
 
 int main() {
@@ -10,14 +7,15 @@ int main() {
   game->intro();
   int remainingVeggies = game->remainingVeggies();
   while (remainingVeggies > 0) {
-    cout << "Remaining veggies: " << remainingVeggies << endl;
-    cout << "Score: " << game->getScore() << endl;
+    cout << remainingVeggies << " veggies remaining. "; 
+    cout << "Current score: " << game->getScore() << endl;
     game->printField();
     game->moveRabbits();
     game->moveCaptain();
     remainingVeggies = game->remainingVeggies();
   }
   game->gameOver();
-  delete game;
+  // delete game;
   return 0;
+
 }

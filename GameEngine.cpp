@@ -19,24 +19,40 @@ void GameEngine::initVeggies() {
 		if(inveggief)
 			break;
 		else
-			cout << filename << " does not exist! Please enter the name of the vegetable point file: ";
+			cout << endl << filename << " does not exist! Please enter the name of the vegetable point file: ";
 	}
 
 	// these variables are for dealing with format
 	string dummy;
 	char comma; 
-	inveggief >> dummy >> height >> comma >> width;
+	string line;
+
+	getline(inveggief, line); 
+	istringstream iss(line);
+
+	getline(iss, dummy, ',');  // Read until the first comma
+	iss >> height >> comma;     // Read height and the next comma
+	iss >> width;               // Read width
 
 	// Garlic,G,5
-	while(inveggief) { // add veggies to vector
+	while(getline(inveggief, line)) { // add veggies to vector
 		string name;
 		string symbol;
+		string pointsStr;
 		int points;
 
-		inveggief >> name >> comma >> symbol >> comma >> points;
+		istringstream iss(line);
+
+		getline(iss, name, ',');
+		getline(iss, symbol, ',');
+		getline(iss, pointsStr);
+		points = stoi(pointsStr);
+
 		Veggie* veggie = new Veggie(symbol, name, points);
 		veggies.push_back(veggie);
+
 	}
+
 
 	array2D = new FieldInhabitant** [height]; // create 2D array
 	for(int i =0; i < height; ++i) {
@@ -48,7 +64,7 @@ void GameEngine::initVeggies() {
 
 	srand(time(NULL)); // current time as seed
 
-	for(int i = 0; i < NUMBEROFVEGGIES; ++i) {
+	for(int i = 0; i < NUMBEROFVEGGIES; ++i) { // put veggies into field
 		int xp, yp, vegIndex;
 		do {
 			xp = rand() % height;
@@ -240,7 +256,7 @@ void GameEngine::moveRabbits(){
 
 		}
 
-		array2D[myRabbit->getX()][myRabbit->getY()] == nullptr; // old location
+		array2D[myRabbit->getX()][myRabbit->getY()] = nullptr; // old location
 		myRabbit->setX(x);
 		myRabbit->setY(y);
 		array2D[x][y] = myRabbit; // new location
@@ -260,9 +276,9 @@ void GameEngine::moveCptVertical(int movement){
 		cout << "You can't move that way!" << endl;
 		return;
 	}else if(array2D[x][y] == nullptr){
-		array2D[captain->getX()][y] == nullptr; // old location
+		array2D[captain->getX()][y] = nullptr; // old location
 		captain->setX(x);
-		array2D[x][y] == captain;// new 
+		array2D[x][y] = captain;// new 
 	}else{
 		myVeggie = dynamic_cast<Veggie *>(array2D[x][y]);
 
@@ -272,9 +288,9 @@ void GameEngine::moveCptVertical(int movement){
 			captain->addVeggie(myVeggie);
 			score += myVeggie->getPoints();
 
-			array2D[captain->getX()][y] == nullptr; // old location
+			array2D[captain->getX()][y] = nullptr; // old location
 			captain->setX(x);
-			array2D[x][y] == captain;// new 
+			array2D[x][y] = captain;// new 
 
 		}else {
 			cout << "Don't step on the bunnies!" << endl;
@@ -295,9 +311,9 @@ void GameEngine::moveCptHorizontal(int movement){
 		cout << "You can't move that way!" << endl;
 		return;
 	}else if(array2D[x][y] == nullptr){
-		array2D[x][captain->getY()] == nullptr; // old location
+		array2D[x][captain->getY()] = nullptr; // old location
 		captain->setY(y);
-		array2D[x][y] == captain;// new 
+		array2D[x][y] = captain;// new 
 	}else{
 		myVeggie = dynamic_cast<Veggie *>(array2D[x][y]);
 
@@ -307,9 +323,9 @@ void GameEngine::moveCptHorizontal(int movement){
 			captain->addVeggie(myVeggie);
 			score += myVeggie->getPoints();
 
-			array2D[x][captain->getY()] == nullptr; // old location
+			array2D[x][captain->getY()] = nullptr; // old location
 			captain->setY(y);
-			array2D[x][y] == captain;// new 
+			array2D[x][y] = captain;// new 
 
 		}else {
 			cout << "Don't step on the bunnies!" << endl;
@@ -348,6 +364,7 @@ void GameEngine::moveCaptain(){
 			break;
 		case 'D':
 			moveCptHorizontal(1);
+			break;
 		default:
             cout << input << " is not a valid option"<< endl;
 		}

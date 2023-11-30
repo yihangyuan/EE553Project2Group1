@@ -8,6 +8,7 @@
 #include <iostream>
 #include <iomanip>
 #include <fstream>
+#include <sstream>
 #include <cstdlib>
 #include <ctime> 
 //class GameEngine : public Creature {
@@ -46,7 +47,7 @@ public:
 	int getScore();
 	int remainingVeggies();
 
-	~GameEngine();
+	// ~GameEngine();
 };
 
 #endif
