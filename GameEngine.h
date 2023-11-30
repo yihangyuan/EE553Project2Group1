@@ -5,7 +5,11 @@
 #include "Rabbit.h"
 #include "Veggie.h"
 #include "Creature.h"
-
+#include <iostream>
+#include <iomanip>
+#include <fstream>
+#include <cstdlib>
+#include <ctime> 
 //class GameEngine : public Creature {
 class GameEngine {
 //protected:
@@ -30,7 +34,7 @@ private:
 	void moveCptHorizontal(int movement);
 
 public:
-	GameEngine(int height, int width);
+	// GameEngine(int height, int width);
 
 	void initializeGame();
 	void intro();
