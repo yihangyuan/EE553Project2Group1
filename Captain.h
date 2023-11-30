@@ -13,8 +13,8 @@ class Captain : public Creature {
     Captain(int x,int y);
     void addVeggie(Veggie*);
 
-    vector<Veggie*>& getCollectedVeggies();
-    void setCollectedVeggies(vector<Veggie*>&);
+    vector<string> getCollectedVeggies();
+    //void setCollectedVeggies(vector<Veggie*>&);
 };
 
 #endif

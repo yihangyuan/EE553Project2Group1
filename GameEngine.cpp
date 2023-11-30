@@ -374,13 +374,13 @@ void GameEngine::moveCaptain(){
 
 void GameEngine::gameOver(){
 
-	vector<Veggie*> collectedveggies = captain->getCollectedVeggies();
+	vector<string> collectedveggies = captain->getCollectedVeggies();
 
 	cout << "GAME OVER!" << endl
 		 << "You managed to harvest the following vegetables:" << endl;
 	
 	for(int i = 0; i < collectedveggies.size(); i++){
-		cout << collectedveggies[i]->getName() << endl;
+		cout << collectedveggies[i] << endl;
 	}
 
 	cout << "Your score was: " << this->score << endl;

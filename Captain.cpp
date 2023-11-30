@@ -6,11 +6,15 @@ void Captain::addVeggie(Veggie* veggie) {
 	collectedveggies.push_back(veggie);
 }
 
-vector<Veggie*>& Captain::getCollectedVeggies() {
-	return collectedveggies;
+vector<string> Captain::getCollectedVeggies() {
+	vector<string> veggies;
+	veggies.clear();
+	for(int i=0; i<this->collectedveggies.size(); i++)
+		veggies.push_back(this->collectedveggies[i]->getName());
+	return veggies;
 }
 
-void Captain::setCollectedVeggies(vector<Veggie*>& newcollectedveggies) {
+/*void Captain::setCollectedVeggies(vector<Veggie*>& newcollectedveggies) {
 	collectedveggies = newcollectedveggies;
-}
+}*/
 
