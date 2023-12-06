@@ -1,4 +1,4 @@
-#ifndef CAPTAIN_H
+#ifndef CAPTAIN_H                           // Header guards
 #define CAPTAIN_H
 #include "Creature.h"
 #include "Veggie.h"
@@ -7,10 +7,11 @@ using namespace std;
 
 class Captain : public Creature {
   protected :
-    vector<Veggie*> collectedveggies;
+    vector<Veggie*> collectedveggies;       // Vector to store pointers to collected Veggie objects
   public:
     //Captain(int,int,string);
-    Captain(int x,int y);
+    // Declarations for constructor, addVeggie and getter functions
+    Captain(int x,int y);                 
     void addVeggie(Veggie*);
 
     vector<string> getCollectedVeggies();

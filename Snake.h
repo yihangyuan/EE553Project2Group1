@@ -4,6 +4,6 @@
 
 class Snake : public Creature {
 public:
-    Snake(int x, int y);
+    Snake(int x, int y);            // Declaration of constructor
 };
 #endif

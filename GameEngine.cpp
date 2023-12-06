@@ -1,23 +1,27 @@
 #include "GameEngine.h"
 
+// @brief Initializes the game by setting up veggies, captain, and rabbits
 void GameEngine::initializeGame() {
-	initVeggies();
-	initCaptain();
-	initRabbits();
-	score = 0;
+	initVeggies();								// Initialize vegetables
+	initCaptain();								// Initialize captain
+	initRabbits();								// Initialize rabbits
+	score = 0;									// Reset the game score to zero
 }
 
+
+// @brief Initializes and loads veggies from a file and sets up the game field
 void GameEngine::initVeggies() {
 	string filename;
 	ifstream inveggief;
 
+	// Continuously prompt for the vegetable file until a valid file is provided
 	while(true) {
 		cout << "Please enter the name of the vegetable point file: ";
 		getline(cin, filename);
 		inveggief.open(filename);
 
 		if(inveggief)
-			break;
+			break;								// Exit loop if file opens successfully
 		else
 			cout << endl << filename << " does not exist! Please enter the name of the vegetable point file: ";
 	}
@@ -27,15 +31,15 @@ void GameEngine::initVeggies() {
 	char comma; 
 	string line;
 
-	getline(inveggief, line); 
+	getline(inveggief, line); 					// Process file contents and populate the veggies vector
 	istringstream iss(line);
 
-	getline(iss, dummy, ',');  // Read until the first comma
-	iss >> height >> comma;     // Read height and the next comma
-	iss >> width;               // Read width
+	getline(iss, dummy, ',');  					// Read until the first comma
+	iss >> height >> comma;     				// Read height and the next comma
+	iss >> width;               				// Read width
 
 	// Garlic,G,5
-	while(getline(inveggief, line)) { // add veggies to vector
+	while(getline(inveggief, line)) { 			// add veggies to vector
 		string name;
 		string symbol;
 		string pointsStr;
@@ -53,8 +57,7 @@ void GameEngine::initVeggies() {
 
 	}
 
-
-	array2D = new FieldInhabitant** [height]; // create 2D array
+	array2D = new FieldInhabitant** [height]; 	// create 2D array and initialize it
 	for(int i =0; i < height; ++i) {
 		array2D[i] = new FieldInhabitant* [width];
 		for(int j =0; j < width; ++j) {
@@ -79,8 +82,11 @@ void GameEngine::initVeggies() {
 
 }
 
+
+// @brief Initializes the captain in the game field
 void GameEngine::initCaptain(){
 
+	// Randomly place the captain on the field
 	srand(time(NULL));
 	int xp, yp;
 	do {
@@ -96,9 +102,12 @@ void GameEngine::initCaptain(){
 }
 
 
+
+// @brief Initializes the rabbits in the game field
 void GameEngine::initRabbits() {
 	srand(time(NULL));
 
+	// Randomly place rabbits on the field and ensure they do not overlap with veggies or the captain
 	for(int i = 0; i < NUMBEROFRABBITS; ++i) {
 		int xp, yp;
 		do {
@@ -112,8 +121,12 @@ void GameEngine::initRabbits() {
 	}
 }
 
+
+// @brief Calculates the remaining number of veggies on the field
+// @return The number of remaining veggies
 int GameEngine::remainingVeggies(){
 
+	// Count the number of remaining vegetables
 	int count = 0; 
 
 	for(int i = 0; i < height; i++){
@@ -131,8 +144,11 @@ int GameEngine::remainingVeggies(){
 	return count;
 }
 
+
+// @brief Displays the introduction message for the game
 void GameEngine::intro() {
 
+	// Print the introduction, game rules and points for each veggie
 	cout << "Welcome to Captain Veggie!" << endl
 		 << "The rabbits have invaded your garden and you must harvest" << endl
 		 << "as many vegetables as possible before the rabbits eat them" << endl
@@ -157,8 +173,11 @@ void GameEngine::intro() {
 
 }
 
+
+// @brief Prints the current state of the game field
 void GameEngine::printField(){
 
+	// Print the game field with its current state, showing positions of veggies, rabbits and captain
 	cout << string(width + 2, '#') << endl; // header
 	
 	for(int i = 0; i < height; i++){
@@ -206,12 +225,18 @@ void GameEngine::printField(){
 
 }
 
-int GameEngine::getScore(){
-	return this->score;
+
+// @brief Getter for the current game score
+// @return The current score
+int GameEngine::getScore(){			
+	return this->score;						// Return the current score
 }
 
+
+// @brief Moves all the rabbits on the field randomly
 void GameEngine::moveRabbits(){
 
+	// Move each rabbit to a random new position on the field and ensure rabbits do not overlap with each other or other objects
 	srand(time(NULL));
 
 	int x, y, xdp, ydp;
@@ -265,8 +290,12 @@ void GameEngine::moveRabbits(){
 }
 
 
+// @brief Moves the captain vertically on the field
+// @param movement The amount to move the captain (-1 for up, 1 for down)
 void GameEngine::moveCptVertical(int movement){
 
+	// Move the captain up or down based on the movement parameter
+	// Handle boundary conditions and interactions with veggies or rabbits
 	Veggie * myVeggie;
 	int x = captain->getX();
 	int y = captain->getY();
@@ -301,7 +330,13 @@ void GameEngine::moveCptVertical(int movement){
 
 }
 
+
+// @brief Moves the captain horizontally on the field
+// @param movement The amount to move the captain (-1 for left, 1 for right)
 void GameEngine::moveCptHorizontal(int movement){
+
+	// Move the captain left or right based on movement parameter
+	// Handle boundary conditions and interactions with veggies or rabbits
 	Veggie * myVeggie;
 	int x = captain->getX();
 	int y = captain->getY();
@@ -334,7 +369,12 @@ void GameEngine::moveCptHorizontal(int movement){
 	}
 }
 
+
+// @brief Processes the captain's movement based on user input
 void GameEngine::moveCaptain(){
+
+	// Read user input for captain's movement
+	// Handle different movements commands (up, down, left, right)
 	string line;
 	char input;
 
@@ -372,8 +412,11 @@ void GameEngine::moveCaptain(){
 	}
 }
 
+
+// @brief Ends the game and displays the final score and collected veggies
 void GameEngine::gameOver(){
 
+	// Display the end game message and show the list of collected veggies and final score
 	vector<string> collectedveggies = captain->getCollectedVeggies();
 
 	cout << "GAME OVER!" << endl

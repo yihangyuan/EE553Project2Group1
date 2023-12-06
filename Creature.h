@@ -1,13 +1,14 @@
-#ifndef CREATURE_H
+#ifndef CREATURE_H                // Header guards
 #define CREATURE_H
 #include "FieldInhabitant.h"
 using namespace std;
 
 class Creature : public FieldInhabitant {
   protected :
-    int x;
-    int y;
+    int x;                        // x-coordinate of the Creature 
+    int y;                        // y-coordinate of the Creature 
   public:
+    // Declarations of Constructor, getter and setter functions
     Creature(int,int,string);
     void setX(int);
     int getX();
