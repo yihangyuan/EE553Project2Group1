@@ -12,6 +12,7 @@ int main() {
     game->printField();
     game->moveRabbits();
     game->moveCaptain();
+    game->moveSnake();
     remainingVeggies = game->remainingVeggies();
   }
   game->gameOver();
