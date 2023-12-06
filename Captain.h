@@ -15,6 +15,7 @@ class Captain : public Creature {
     void addVeggie(Veggie*);
 
     vector<string> getCollectedVeggies();
+    void loseLast5Veggies();
     //void setCollectedVeggies(vector<Veggie*>&);
 };
 

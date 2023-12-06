@@ -20,10 +20,18 @@ int main() {
   while (remainingVeggies > 0) {                                // Game loop that continues as long as there are veggies remaining
     cout << remainingVeggies << " veggies remaining. ";         // Display the count of remaining veggies and the current score
     cout << "Current score: " << game->getScore() << endl;
+<<<<<<< HEAD
     game->printField();                                         // Print the current state of the game field
     game->moveRabbits();                                        // Move the rabbits to new positions on the field
     game->moveCaptain();                                        // Process the captain's movement based on user input
     remainingVeggies = game->remainingVeggies();                // Update the count of remaining veggies
+=======
+    game->printField();
+    game->moveRabbits();
+    game->moveCaptain();
+    game->moveSnake();
+    remainingVeggies = game->remainingVeggies();
+>>>>>>> d5e754bcf511384e1ad49d4459802161677c59a8
   }
   game->gameOver();                                             // When no veggies are left, end the game and display the final results
   // delete game;

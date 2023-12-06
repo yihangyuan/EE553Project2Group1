@@ -23,8 +23,19 @@ vector<string> Captain::getCollectedVeggies() {
 	return veggies;													 	// Return the list of Veggie names
 }
 
+<<<<<<< HEAD
 
 /*void Captain::setCollectedVeggies(vector<Veggie*>& newcollectedveggies) {
 	collectedveggies = newcollectedveggies;
 }*/
+=======
+void Captain::loseLast5Veggies() {
+	if(this->collectedveggies.size() > 5) {
+    for(int i=0;i<5;i++)
+      this->collectedveggies.pop_back();
+  }
+  else
+    this->collectedveggies.clear();
+}
+>>>>>>> d5e754bcf511384e1ad49d4459802161677c59a8
 
