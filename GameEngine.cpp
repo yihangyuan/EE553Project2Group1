@@ -2,19 +2,11 @@
 
 // @brief Initializes the game by setting up veggies, captain, and rabbits
 void GameEngine::initializeGame() {
-<<<<<<< HEAD
 	initVeggies();								// Initialize vegetables
 	initCaptain();								// Initialize captain
 	initRabbits();								// Initialize rabbits
-	score = 0;									// Reset the game score to zero
-=======
-	initVeggies();
-	initCaptain();
-	initRabbits();
-	initSnake();
-	score = 0;
-  bites = 0;
->>>>>>> d5e754bcf511384e1ad49d4459802161677c59a8
+	score = 0;								// Reset the game score to zero
+	bites = 0;  
 }
 
 
@@ -30,7 +22,7 @@ void GameEngine::initVeggies() {
 		inveggief.open(filename);
 
 		if(inveggief)
-			break;								// Exit loop if file opens successfully
+			break;					// Exit loop if file opens successfully
 		else
 			cout << endl << filename << " does not exist! Please enter the name of the vegetable point file: ";
 	}
@@ -40,10 +32,10 @@ void GameEngine::initVeggies() {
 	char comma; 
 	string line;
 
-	getline(inveggief, line); 					// Process file contents and populate the veggies vector
+	getline(inveggief, line); 				// Process file contents and populate the veggies vector
 	istringstream iss(line);
 
-	getline(iss, dummy, ',');  					// Read until the first comma
+	getline(iss, dummy, ',');  				// Read until the first comma
 	iss >> height >> comma;     				// Read height and the next comma
 	iss >> width;               				// Read width
 
@@ -60,7 +52,7 @@ void GameEngine::initVeggies() {
 		getline(iss, symbol, ',');
 		getline(iss, pointsStr);
 		points = stoi(pointsStr);
-    VeggiePoints[name]=points;
+    		VeggiePoints[name]=points;
 
 		Veggie* veggie = new Veggie(symbol, name, points);
 		veggies.push_back(veggie);
@@ -131,11 +123,8 @@ void GameEngine::initRabbits() {
 	}
 }
 
-<<<<<<< HEAD
 
-// @brief Calculates the remaining number of veggies on the field
-// @return The number of remaining veggies
-=======
+
 void GameEngine::initSnake(){
   string addSnake = "";
   cout << "Would you be interested to add a Snake to the Game?" << endl;
@@ -160,7 +149,9 @@ void GameEngine::initSnake(){
 	array2D[xp][yp] = snake;
 }
 
->>>>>>> d5e754bcf511384e1ad49d4459802161677c59a8
+
+// @brief Calculates the remaining number of veggies on the field
+// @return The number of remaining veggies
 int GameEngine::remainingVeggies(){
 
 	// Count the number of remaining vegetables
@@ -269,7 +260,7 @@ void GameEngine::printField(){
 // @brief Getter for the current game score
 // @return The current score
 int GameEngine::getScore(){			
-	return this->score;						// Return the current score
+	return this->score;			// Return the current score
 }
 
 
@@ -328,10 +319,6 @@ void GameEngine::moveRabbits(){
 }
 
 
-<<<<<<< HEAD
-// @brief Moves the captain vertically on the field
-// @param movement The amount to move the captain (-1 for up, 1 for down)
-=======
 void GameEngine::moveSnake(){
   Snake *  mySnake=nullptr;
   mySnake = this->snake;
@@ -676,7 +663,9 @@ void GameEngine::moveSnake(){
 
 
 
->>>>>>> d5e754bcf511384e1ad49d4459802161677c59a8
+
+// @brief Moves the captain vertically on the field
+// @param movement The amount to move the captain (-1 for up, 1 for down)
 void GameEngine::moveCptVertical(int movement){
 
 	// Move the captain up or down based on the movement parameter
@@ -800,23 +789,20 @@ void GameEngine::moveCaptain(){
 
 // @brief Ends the game and displays the final score and collected veggies
 void GameEngine::gameOver(){
-<<<<<<< HEAD
+   // Display the end game message and show the list of collected veggies and final score
 
-	// Display the end game message and show the list of collected veggies and final score
-=======
   int actualPoints = 0;
->>>>>>> d5e754bcf511384e1ad49d4459802161677c59a8
-	vector<string> collectedveggies = captain->getCollectedVeggies();
+  vector<string> collectedveggies = captain->getCollectedVeggies();
 
-	cout << "GAME OVER!" << endl
-		 << "You managed to harvest the following vegetables:" << endl;
+  cout << "GAME OVER!" << endl
+	<< "You managed to harvest the following vegetables:" << endl;
 	
-	for(int i = 0; i < collectedveggies.size(); i++){
+  for(int i = 0; i < collectedveggies.size(); i++){
 		cout << collectedveggies[i] << endl;
-    actualPoints+=VeggiePoints[collectedveggies[i]];
-	}
+    		actualPoints+=VeggiePoints[collectedveggies[i]];
+  }
 
-	cout << "Your score was: " << this->score << endl;
+  cout << "Your score was: " << this->score << endl;
   if(snake){
     if(bites){
       cout << "Since snake bit the captain, you lost " << this->score - actualPoints << " points!" << endl;

@@ -18,17 +18,16 @@ void Captain::addVeggie(Veggie* veggie) {
 vector<string> Captain::getCollectedVeggies() {
 	vector<string> veggies;
 	veggies.clear();
-	for(int i=0; i<this->collectedveggies.size(); i++)					// Loop through collected veggies
+	for(int i=0; i<this->collectedveggies.size(); i++)				// Loop through collected veggies
 		veggies.push_back(this->collectedveggies[i]->getName());		// Get and store the name of each Veggie
-	return veggies;													 	// Return the list of Veggie names
+	return veggies;									// Return the list of Veggie names
 }
 
-<<<<<<< HEAD
 
 /*void Captain::setCollectedVeggies(vector<Veggie*>& newcollectedveggies) {
 	collectedveggies = newcollectedveggies;
 }*/
-=======
+
 void Captain::loseLast5Veggies() {
 	if(this->collectedveggies.size() > 5) {
     for(int i=0;i<5;i++)
@@ -37,5 +36,5 @@ void Captain::loseLast5Veggies() {
   else
     this->collectedveggies.clear();
 }
->>>>>>> d5e754bcf511384e1ad49d4459802161677c59a8
+
 
