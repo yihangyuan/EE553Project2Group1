@@ -2,6 +2,7 @@
    Date: 12-07-2023
    Description: This file implements functions of class FieldInhabitant
 */
+
 #include "FieldInhabitant.h"
 
 // @brief Constructor for FieldInhabitant

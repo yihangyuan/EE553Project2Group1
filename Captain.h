@@ -1,7 +1,8 @@
-/* Author: Gaurav Dubey
+/* Author: Gaurav Dubey, Yihang Yuan, Al Zahra
 Date: 12/5/2023
 Description: Header file which defines class named Captain.
 */
+
 #ifndef CAPTAIN_H                           // Header guards
 #define CAPTAIN_H
 #include "Creature.h"

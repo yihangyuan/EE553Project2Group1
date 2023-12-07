@@ -1,7 +1,8 @@
-/* Author: Gaurav Dubey
+/* Author: Gaurav Dubey, Yihang Yuan, Al Zahra
 Date: 12/5/2023
 Description: Header file which defines classes named Snake, gNode and others typedefs.
 */
+
 #ifndef SNAKE_H
 #define SNAKE_H
 #include "Creature.h"

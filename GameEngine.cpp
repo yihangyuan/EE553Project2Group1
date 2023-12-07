@@ -1,3 +1,10 @@
+/* Authors: Al Zahra, Yihang Yuan, Gaurav Dubey
+   Date: 12-07-2023
+   Description: This file implements the game logic and state for a simple grid-based game. It involves a captain collecting
+   		vegetables while avoiding rabbits and optionally a snake. The game takes place on a 2D grid where each cell
+		can contain a vegetable, a rabbit, a snake, or the captain.
+*/
+
 #include "GameEngine.h"
 
 // @brief Initializes the game by setting up veggies, captain, rabbits and snake

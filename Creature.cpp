@@ -2,6 +2,7 @@
    Date: 12-07-2023
    Description: This file implements functions of class Creature
 */
+
 #include "Creature.h"
 
 // @brief Constructor for Creature

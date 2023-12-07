@@ -1,8 +1,9 @@
-/* Author: Gaurav Dubey
+/* Author: Gaurav Dubey, Yihang Yuan, Al Zahra
 Date: 12/5/2023
 Description: provide function definitions for each 
 of the functions declared in Snake.h
 */
+
 #include "Snake.h"
 
  // @brief Snake constructor
