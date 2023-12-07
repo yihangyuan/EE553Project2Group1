@@ -1,3 +1,7 @@
+/* Author: Gaurav Dubey
+Date: 12/5/2023
+Description: Header file which defines class named Creature.
+*/
 #ifndef CREATURE_H                // Header guards
 #define CREATURE_H
 #include "FieldInhabitant.h"

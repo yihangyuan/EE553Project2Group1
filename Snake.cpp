@@ -1,7 +1,10 @@
+/* Author: Gaurav Dubey
+Date: 12/5/2023
+Description: provide function definitions for each 
+of the functions declared in Snake.h
+*/
 #include "Snake.h"
 
-// @brief Constructor for Snake
-// @param x The initial x-coordinate of the Snake
-// @param y The initial y-coordinate of the Snake
-// Initializes a Snake object at specified coordinates and inherits from Creature class
+ // @brief Snake constructor
+ // @return nothing
 Snake::Snake(int x, int y) : Creature(x, y, "S") {}

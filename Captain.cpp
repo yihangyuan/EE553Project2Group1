@@ -1,3 +1,7 @@
+/* Authors: Al Zahra, Yihang Yuan, Gaurav Dubey
+   Date: 12-07-2023
+   Description: This file implements functions of class Captain
+*/
 #include "Captain.h"
 
 // @brief Constructor for Captain
@@ -24,10 +28,8 @@ vector<string> Captain::getCollectedVeggies() {
 }
 
 
-/*void Captain::setCollectedVeggies(vector<Veggie*>& newcollectedveggies) {
-	collectedveggies = newcollectedveggies;
-}*/
-
+// @brief this function will remove last 5 collected veggies 
+// @return nothing
 void Captain::loseLast5Veggies() {
 	if(this->collectedveggies.size() > 5) {
     for(int i=0;i<5;i++)

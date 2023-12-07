@@ -1,3 +1,7 @@
+/* Authors: Al Zahra, Yihang Yuan, Gaurav Dubey
+   Date: 12-07-2023
+   Description: Header file which defines class named GameEngine and others defines.
+*/
 #ifndef GAMEENGINE_H							// Header guards
 #define GAMEENGINE_H
 #include "FieldInhabitant.h"

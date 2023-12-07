@@ -1,3 +1,7 @@
+/* Authors: Al Zahra, Yihang Yuan, Gaurav Dubey
+   Date: 12-07-2023
+   Description: This file implements functions of class Veggie
+*/
 #include "Veggie.h"
 
 // @brief Constructor for Veggie

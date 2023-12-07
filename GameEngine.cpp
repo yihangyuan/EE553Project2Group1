@@ -1,6 +1,6 @@
 #include "GameEngine.h"
 
-// @brief Initializes the game by setting up veggies, captain, and rabbits
+// @brief Initializes the game by setting up veggies, captain, rabbits and snake
 void GameEngine::initializeGame() {
 	initVeggies();								// Initialize vegetables
 	initCaptain();								// Initialize captain
@@ -126,6 +126,7 @@ void GameEngine::initRabbits() {
 
 
 
+// @brief Initializes the snake in the game field
 void GameEngine::initSnake(){
   string addSnake = "";
   cout << "Would you be interested to add a Snake to the Game?" << endl;
