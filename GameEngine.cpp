@@ -5,6 +5,7 @@ void GameEngine::initializeGame() {
 	initVeggies();								// Initialize vegetables
 	initCaptain();								// Initialize captain
 	initRabbits();								// Initialize rabbits
+	initSnake();
 	score = 0;								// Reset the game score to zero
 	bites = 0;  
 }
@@ -319,12 +320,33 @@ void GameEngine::moveRabbits(){
 }
 
 
+// @brief Moves the rabbit based on a* algorithm
+// @return nothing
 void GameEngine::moveSnake(){
+  //check if we have a snake in the game
   Snake *  mySnake=nullptr;
   mySnake = this->snake;
+  //lets return no snake found
   if(!mySnake)
     return;
 
+  //next step for snake
+  // let's initialize it out of the array2D for errors in algorithm outcome
+  int x=-1;
+  int y=-1;
+
+
+  // A* Search Algorithm
+  
+  //1.  Initialize the open list
+  // a set used instead of a list as we need to maintain a sorted, unique collection
+  set<pPair> openList;
+ 
+  //2.  Initialize the closed list
+  
+  /*create a grid of gNode where each gNode represents a spot in the array2D
+    each gNode is initialzed with f,g,h as INF, it's parent as (-1,-1) and not closed
+    it is declared as blocked if only if we have a rabbit or a veggie on the same spot in the array2D*/
   gNode **grid=nullptr;
   grid=new gNode*[height];
   for(int r=0; r<height ;r++){
@@ -340,259 +362,119 @@ void GameEngine::moveSnake(){
       grid[r][c].setParams(FLT_MAX,FLT_MAX,FLT_MAX,-1,-1,blocked,false);
     }
   }
-  int i=mySnake->getX();
-  int j=mySnake->getY();
-  grid[i][j].setParams(0.0,0.0,0.0,i,j);
 
-  //run a* algorithm
-  int x=-1;
-  int y=-1;
-  
-  /*
-   Create an open list having information as-
-   <f, <i, j>>
-   where f = g + h,
-   and i, j are the row and column index of that cell
-   Note that 0 <= i <= ROW-1 & 0 <= j <= COL-1
-   This open list is implemented as a set of pair of
-   pair.*/
-  set<pPair> openList;
- 
-  // Put the starting cell on the open list and set its
-  // 'f' as 0
-  openList.insert(make_pair(0.0, make_pair(i, j)));
+  //f,g,h are all zero and it is its own parent
+  //like a root of the tree
+  //since it is already open we do not touch the closed member of gNode
+  grid[mySnake->getX()][mySnake->getY()].setParams(0.0,0.0,0.0,mySnake->getX(),mySnake->getY());
+
+  //put the starting node on the open 
+  openList.insert(make_pair(0.0, make_pair(mySnake->getX(),mySnake->getY())));
  
   // We set this boolean value as false as initially
   // the destination is not reached.
   bool foundDest = false;
- 
+  
+  //3.  while the open list is not empty
   while (!openList.empty()) {
-      pPair p = *openList.begin();
- 
-      // Remove this vertex from the open list
-      openList.erase(openList.begin());
- 
-      // Add this vertex to the closed list
-      i = p.second.first;
-      j = p.second.second;
-      grid[i][j].closed = true;
- 
-      /*
-       Generating all the 4 successor of this cell
- 
-                 N  
-                 |  
-                 |  
-           W----Cell----E
-                  | 
-                  |  
-                  S 
- 
-       Cell-->Popped Cell (i, j)
-       N -->  North       (i-1, j)
-       S -->  South       (i+1, j)
-       E -->  East        (i, j+1)
-       W -->  West        (i, j-1)
-       */
- 
-      // To store the 'g', 'h' and 'f' of the 8 successors
-      double gNew, hNew, fNew;
- 
-      //----------- 1st Successor (North) ------------
- 
-      // Only process this cell if this is a valid one
-      if (isValid(i - 1, j) == true) {
-          // If the destination cell is the same as the
-          // current successor
-          if (isDestination(i - 1, j) == true) {
-              // Set the Parent of the destination cell
-              grid[i - 1][j].pR = i;
-              grid[i - 1][j].pC = j;
-              foundDest = true;
-              break;
+    //a) find the node with the least f on 
+    //the open list, call it "q"
+    pPair q = *openList.begin();
+
+    //b) pop q off the open list
+    openList.erase(openList.begin());
+    //c) generate q's 4 successors and set their 
+    // parents to q
+    Pair qSuccessors[4] = { make_pair(q.second.first-1, q.second.second),
+                            make_pair(q.second.first+1, q.second.second),
+                            make_pair(q.second.first, q.second.second+1),
+                            make_pair(q.second.first, q.second.second-1)};
+
+    // Add this vertex to the closed list
+    grid[q.second.first][q.second.second].closed = true;
+
+
+    // To store the 'g', 'h' and 'f' of the 8 successors
+
+    /*
+      d) for each successor
+        i) if successor is the goal, stop search
+      
+        ii) else, compute both g and h for successor
+        successor.g = q.g + distance between 
+                            successor and q
+        successor.h = distance from goal to 
+        successor (Euclidean distance)
+        
+        successor.f = successor.g + successor.h
+        iii) if a node with the same position as 
+          successor is in the OPEN list which has a 
+         lower f than successor, skip this successor
+        iV) if a node with the same position as 
+          successor  is in the CLOSED list which has
+          a lower f than successor, skip this successor
+          otherwise, add  the node to the open list
+        end (for loop)
+     */
+    for(int s=0;s<4;s++){
+      //we found destination but, we exited the for-loop and not the while-loop.
+      //so lets continue
+      if(foundDest)
+        continue;
+      if (isValid(qSuccessors[s].first, qSuccessors[s].second) == true) {
+        // i) if successor is the goal, stop search
+        if (isDestination(qSuccessors[s].first, qSuccessors[s].second) == true) {
+            // Set the Parent of the destination cell
+            grid[qSuccessors[s].first][qSuccessors[s].second].pR = q.second.first;
+            grid[qSuccessors[s].first][qSuccessors[s].second].pC = q.second.second;
+            foundDest = true;
+            //exit this loop
+            s=5;
+        }
+        // successor is in the CLOSED list -> skip
+        // successor is blocked -> skip
+        //else if further check f
+        else if (!grid[qSuccessors[s].first][qSuccessors[s].second].closed && 
+                  isUnBlocked(grid, qSuccessors[s].first, qSuccessors[s].second)) {
+
+          double gNew, hNew, fNew;
+          //compute both g and h for successor
+          gNew = grid[q.second.first][q.second.second].g + 1.0;
+          hNew = calculateHValue(qSuccessors[s].first, qSuccessors[s].second);
+          fNew = gNew + hNew;
+
+          //if filtered successor has a lower f -> skip
+          //else add this successor node to the openlist
+          if (grid[qSuccessors[s].first][qSuccessors[s].second].f == FLT_MAX || 
+                grid[qSuccessors[s].first][qSuccessors[s].second].f > fNew) {
+              //add to the open list
+              // 
+              openList.insert(make_pair(
+                  fNew, make_pair(qSuccessors[s].first, qSuccessors[s].second)));
+
+              // Update the details of this gNode
+              grid[qSuccessors[s].first][qSuccessors[s].second].f = fNew;
+              grid[qSuccessors[s].first][qSuccessors[s].second].g = gNew;
+              grid[qSuccessors[s].first][qSuccessors[s].second].h = hNew;
+              grid[qSuccessors[s].first][qSuccessors[s].second].pR = q.second.first;
+              grid[qSuccessors[s].first][qSuccessors[s].second].pC = q.second.second;
           }
-          // If the successor is already on the closed
-          // list or if it is blocked, then ignore it.
-          // Else do the following
-          else if (grid[i - 1][j].closed == false
-                   && isUnBlocked(grid, i - 1, j)
-                          == true) {
-              gNew = grid[i][j].g + 1.0;
-              hNew = calculateHValue(i - 1, j);
-              fNew = gNew + hNew;
- 
-              // If it isn’t on the open list, add it to
-              // the open list. Make the current square
-              // the parent of this square. Record the
-              // f, g, and h costs of the square cell
-              //                OR
-              // If it is on the open list already, check
-              // to see if this path to that square is
-              // better, using 'f' cost as the measure.
-              if (grid[i - 1][j].f == FLT_MAX
-                  || grid[i - 1][j].f > fNew) {
-                  openList.insert(make_pair(
-                      fNew, make_pair(i - 1, j)));
- 
-                  // Update the details of this cell
-                  grid[i - 1][j].f = fNew;
-                  grid[i - 1][j].g = gNew;
-                  grid[i - 1][j].h = hNew;
-                  grid[i - 1][j].pR = i;
-                  grid[i - 1][j].pC = j;
-              }
-          }
+        }
       }
- 
-      //----------- 2nd Successor (South) ------------
- 
-      // Only process this cell if this is a valid one
-      if (isValid(i + 1, j) == true) {
-          // If the destination cell is the same as the
-          // current successor
-          if (isDestination(i + 1, j) == true) {
-              // Set the Parent of the destination cell
-              grid[i + 1][j].pR = i;
-              grid[i + 1][j].pC = j;
-              foundDest = true;
-              break;
-          }
-          // If the successor is already on the closed
-          // list or if it is blocked, then ignore it.
-          // Else do the following
-          else if (grid[i + 1][j].closed == false
-                   && isUnBlocked(grid, i + 1, j)
-                          == true) {
-              gNew = grid[i][j].g + 1.0;
-              hNew = calculateHValue(i + 1, j);
-              fNew = gNew + hNew;
- 
-              // If it isn’t on the open list, add it to
-              // the open list. Make the current square
-              // the parent of this square. Record the
-              // f, g, and h costs of the square cell
-              //                OR
-              // If it is on the open list already, check
-              // to see if this path to that square is
-              // better, using 'f' cost as the measure.
-              if (grid[i + 1][j].f == FLT_MAX
-                  || grid[i + 1][j].f > fNew) {
-                  openList.insert(make_pair(
-                      fNew, make_pair(i + 1, j)));
-                  // Update the details of this cell
-                  grid[i + 1][j].f = fNew;
-                  grid[i + 1][j].g = gNew;
-                  grid[i + 1][j].h = hNew;
-                  grid[i + 1][j].pR = i;
-                  grid[i + 1][j].pC = j;
-              }
-          }
-      }
- 
-      //----------- 3rd Successor (East) ------------
- 
-      // Only process this cell if this is a valid one
-      if (isValid(i, j + 1) == true) {
-          // If the destination cell is the same as the
-          // current successor
-          if (isDestination(i, j + 1) == true) {
-              // Set the Parent of the destination cell
-              grid[i][j + 1].pR = i;
-              grid[i][j + 1].pC = j;
-              foundDest = true;
-              break;
-          }
- 
-          // If the successor is already on the closed
-          // list or if it is blocked, then ignore it.
-          // Else do the following
-          else if (grid[i][j + 1].closed == false
-                   && isUnBlocked(grid, i, j + 1)
-                          == true) {
-              gNew = grid[i][j].g + 1.0;
-              hNew = calculateHValue(i, j + 1);
-              fNew = gNew + hNew;
- 
-              // If it isn’t on the open list, add it to
-              // the open list. Make the current square
-              // the parent of this square. Record the
-              // f, g, and h costs of the square cell
-              //                OR
-              // If it is on the open list already, check
-              // to see if this path to that square is
-              // better, using 'f' cost as the measure.
-              if (grid[i][j + 1].f == FLT_MAX
-                  || grid[i][j + 1].f > fNew) {
-                  openList.insert(make_pair(
-                      fNew, make_pair(i, j + 1)));
- 
-                  // Update the details of this cell
-                  grid[i][j + 1].f = fNew;
-                  grid[i][j + 1].g = gNew;
-                  grid[i][j + 1].h = hNew;
-                  grid[i][j + 1].pR = i;
-                  grid[i][j + 1].pC = j;
-              }
-          }
-      }
- 
-      //----------- 4th Successor (West) ------------
- 
-      // Only process this cell if this is a valid one
-      if (isValid(i, j - 1) == true) {
-          // If the destination cell is the same as the
-          // current successor
-          if (isDestination(i, j - 1) == true) {
-              // Set the Parent of the destination cell
-              grid[i][j - 1].pR = i;
-              grid[i][j - 1].pC = j;
-              foundDest = true;
-              break;
-          }
- 
-          // If the successor is already on the closed
-          // list or if it is blocked, then ignore it.
-          // Else do the following
-          else if (grid[i][j - 1].closed == false
-                   && isUnBlocked(grid, i, j - 1)
-                          == true) {
-              gNew = grid[i][j].g + 1.0;
-              hNew = calculateHValue(i, j - 1);
-              fNew = gNew + hNew;
- 
-              // If it isn’t on the open list, add it to
-              // the open list. Make the current square
-              // the parent of this square. Record the
-              // f, g, and h costs of the square cell
-              //                OR
-              // If it is on the open list already, check
-              // to see if this path to that square is
-              // better, using 'f' cost as the measure.
-              if (grid[i][j - 1].f == FLT_MAX
-                  || grid[i][j - 1].f > fNew) {
-                  openList.insert(make_pair(
-                      fNew, make_pair(i, j - 1)));
- 
-                  // Update the details of this cell
-                  grid[i][j - 1].f = fNew;
-                  grid[i][j - 1].g = gNew;
-                  grid[i][j - 1].h = hNew;
-                  grid[i][j - 1].pR = i;
-                  grid[i][j - 1].pC = j;
-              }
-          }
-      }
+    }
+    if(foundDest)
+      break;
   }
 
-  //
-
   if(foundDest){
-    //traceroute
+    //trace the route to the snake from the captain
+    // only snake's spot will have its self parent
     int row = captain->getX();
     int col = captain->getY();
  
     stack<Pair> Path;
- 
+
+    //loop until we find snake
     while (!(grid[row][col].pR == row
              && grid[row][col].pC == col)) {
         Path.push(make_pair(row, col));
@@ -602,30 +484,22 @@ void GameEngine::moveSnake(){
         col = temp_col;
     }
     pair<int, int> nextStep = Path.top();
+    //update next step
     x = nextStep.first;
     y = nextStep.second;
-    /*Path.push(make_pair(row, col));
-    while (!Path.empty()) {
-        pair<int, int> p = Path.top();
-        Path.pop();
-        cout << "-> (" << p.first << "," << p.second <<") " << endl;
-    }*/
-  } else {
-    ;
   }
 
-
-
-  //delete grid
+  //delete grid for memory clean up
   for(int r=0;r<height;r++)
    delete[]  grid[r];
   delete[] grid;
 
-  //new location
   //no path found
   if(x==-1 || y==-1)
     return;
   
+  //new location
+
 	//do we have captain here
 	if(array2D[x][y]){
 		Captain* myCaptain = dynamic_cast<Captain *>(array2D[x][y]);
@@ -805,7 +679,8 @@ void GameEngine::gameOver(){
   cout << "Your score was: " << this->score << endl;
   if(snake){
     if(bites){
-      cout << "Since snake bit the captain, you lost " << this->score - actualPoints << " points!" << endl;
+      string times = (bites==1)? " time, you lost " : " times, you lost ";
+      cout << "Since snake bit the captain "<< bites << times << this->score - actualPoints << " points!" << endl;
       cout << "Final score: " << actualPoints << endl;
     }
   }
