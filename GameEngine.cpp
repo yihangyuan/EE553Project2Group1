@@ -328,7 +328,7 @@ void GameEngine::moveRabbits(){
 }
 
 
-// @brief Moves the rabbit based on a* algorithm
+// @brief Moves the snake based on a* algorithm
 // @return nothing
 void GameEngine::moveSnake(){
   //check if we have a snake in the game
