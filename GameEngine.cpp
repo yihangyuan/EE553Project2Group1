@@ -328,7 +328,7 @@ void GameEngine::moveRabbits(){
 }
 
 
-// @brief Moves the snake based on a* algorithm
+// @brief Moves the snake
 // @return nothing
 void GameEngine::moveSnake(){
   //check if we have a snake in the game
@@ -338,170 +338,39 @@ void GameEngine::moveSnake(){
   if(!mySnake)
     return;
 
-  //next step for snake
-  // let's initialize it out of the array2D for errors in algorithm outcome
+  int snakeX, snakeY;
+  snakeX=snake->getX();
+  snakeY=snake->getY();
+  Pair moves[4] = {make_pair(snakeX-1,snakeY),
+                   make_pair(snakeX+1,snakeY),
+				   make_pair(snakeX,snakeY+1),
+				   make_pair(snakeX,snakeY-1)};
+  double distances[4] = {FLT_MAX,FLT_MAX,FLT_MAX,FLT_MAX};
+  double minDis = -1.0;
+  int minIdx=-1;
   int x=-1;
   int y=-1;
-
-
-  // A* Search Algorithm
-  
-  //1.  Initialize the open list
-  // a set used instead of a list as we need to maintain a sorted, unique collection
-  set<pPair> openList;
- 
-  //2.  Initialize the closed list
-  
-  /*create a grid of gNode where each gNode represents a spot in the array2D
-    each gNode is initialzed with f,g,h as INF, it's parent as (-1,-1) and not closed
-    it is declared as blocked if only if we have a rabbit or a veggie on the same spot in the array2D*/
-  gNode **grid=nullptr;
-  grid=new gNode*[height];
-  for(int r=0; r<height ;r++){
-    grid[r]=new gNode[width];
-    for(int c=0;c<width;c++){
-      bool blocked = false;
-		  Veggie* myVeggie = dynamic_cast<Veggie *>(array2D[r][c]);
-		  Rabbit* myRabbit = dynamic_cast<Rabbit *>(array2D[r][c]);
-      if(myVeggie)
-        blocked=true;
-      if(myRabbit)
-        blocked=true;
-      grid[r][c].setParams(FLT_MAX,FLT_MAX,FLT_MAX,-1,-1,blocked,false);
-    }
+  for(int s=0;s<4;s++){
+	if(!isValid(moves[s].first,moves[s].second))
+		continue;
+	Veggie* veggie = dynamic_cast<Veggie *>(array2D[moves[s].first][moves[s].second]);
+	if(veggie)
+		continue;
+	Rabbit* rabbit = dynamic_cast<Rabbit *>(array2D[moves[s].first][moves[s].second]);
+	if(rabbit)
+		continue;
+	distances[s]=calculateHValue(moves[s].first,moves[s].second);
+	if((minIdx < 0)||(minDis > distances[s])){
+		minIdx=s;
+		minDis=distances[s];
+	}
   }
-
-  //f,g,h are all zero and it is its own parent
-  //like a root of the tree
-  //since it is already open we do not touch the closed member of gNode
-  grid[mySnake->getX()][mySnake->getY()].setParams(0.0,0.0,0.0,mySnake->getX(),mySnake->getY());
-
-  //put the starting node on the open 
-  openList.insert(make_pair(0.0, make_pair(mySnake->getX(),mySnake->getY())));
- 
-  // We set this boolean value as false as initially
-  // the destination is not reached.
-  bool foundDest = false;
-  
-  //3.  while the open list is not empty
-  while (!openList.empty()) {
-    //a) find the node with the least f on 
-    //the open list, call it "q"
-    pPair q = *openList.begin();
-
-    //b) pop q off the open list
-    openList.erase(openList.begin());
-    //c) generate q's 4 successors and set their 
-    // parents to q
-    Pair qSuccessors[4] = { make_pair(q.second.first-1, q.second.second),
-                            make_pair(q.second.first+1, q.second.second),
-                            make_pair(q.second.first, q.second.second+1),
-                            make_pair(q.second.first, q.second.second-1)};
-
-    // Add this vertex to the closed list
-    grid[q.second.first][q.second.second].closed = true;
-
-
-    // To store the 'g', 'h' and 'f' of the 8 successors
-
-    /*
-      d) for each successor
-        i) if successor is the goal, stop search
-      
-        ii) else, compute both g and h for successor
-        successor.g = q.g + distance between 
-                            successor and q
-        successor.h = distance from goal to 
-        successor (Euclidean distance)
-        
-        successor.f = successor.g + successor.h
-        iii) if a node with the same position as 
-          successor is in the OPEN list which has a 
-         lower f than successor, skip this successor
-        iV) if a node with the same position as 
-          successor  is in the CLOSED list which has
-          a lower f than successor, skip this successor
-          otherwise, add  the node to the open list
-        end (for loop)
-     */
-    for(int s=0;s<4;s++){
-      //we found destination but, we exited the for-loop and not the while-loop.
-      //so lets continue
-      if(foundDest)
-        continue;
-      if (isValid(qSuccessors[s].first, qSuccessors[s].second) == true) {
-        // i) if successor is the goal, stop search
-        if (isDestination(qSuccessors[s].first, qSuccessors[s].second) == true) {
-            // Set the Parent of the destination cell
-            grid[qSuccessors[s].first][qSuccessors[s].second].pR = q.second.first;
-            grid[qSuccessors[s].first][qSuccessors[s].second].pC = q.second.second;
-            foundDest = true;
-            //exit this loop
-            s=5;
-        }
-        // successor is in the CLOSED list -> skip
-        // successor is blocked -> skip
-        //else if further check f
-        else if (!grid[qSuccessors[s].first][qSuccessors[s].second].closed && 
-                  isUnBlocked(grid, qSuccessors[s].first, qSuccessors[s].second)) {
-
-          double gNew, hNew, fNew;
-          //compute both g and h for successor
-          gNew = grid[q.second.first][q.second.second].g + 1.0;
-          hNew = calculateHValue(qSuccessors[s].first, qSuccessors[s].second);
-          fNew = gNew + hNew;
-
-          //if filtered successor has a lower f -> skip
-          //else add this successor node to the openlist
-          if (grid[qSuccessors[s].first][qSuccessors[s].second].f == FLT_MAX || 
-                grid[qSuccessors[s].first][qSuccessors[s].second].f > fNew) {
-              //add to the open list
-              // 
-              openList.insert(make_pair(
-                  fNew, make_pair(qSuccessors[s].first, qSuccessors[s].second)));
-
-              // Update the details of this gNode
-              grid[qSuccessors[s].first][qSuccessors[s].second].f = fNew;
-              grid[qSuccessors[s].first][qSuccessors[s].second].g = gNew;
-              grid[qSuccessors[s].first][qSuccessors[s].second].h = hNew;
-              grid[qSuccessors[s].first][qSuccessors[s].second].pR = q.second.first;
-              grid[qSuccessors[s].first][qSuccessors[s].second].pC = q.second.second;
-          }
-        }
-      }
-    }
-    if(foundDest)
-      break;
+  if(minIdx<0)
+	return;
+  else {
+	x=moves[minIdx].first;
+	y=moves[minIdx].second;
   }
-
-  if(foundDest){
-    //trace the route to the snake from the captain
-    // only snake's spot will have its self parent
-    int row = captain->getX();
-    int col = captain->getY();
- 
-    stack<Pair> Path;
-
-    //loop until we find snake
-    while (!(grid[row][col].pR == row
-             && grid[row][col].pC == col)) {
-        Path.push(make_pair(row, col));
-        int temp_row = grid[row][col].pR;
-        int temp_col = grid[row][col].pC;
-        row = temp_row;
-        col = temp_col;
-    }
-    pair<int, int> nextStep = Path.top();
-    //update next step
-    x = nextStep.first;
-    y = nextStep.second;
-  }
-
-  //delete grid for memory clean up
-  for(int r=0;r<height;r++)
-   delete[]  grid[r];
-  delete[] grid;
-
   //no path found
   if(x==-1 || y==-1)
     return;
